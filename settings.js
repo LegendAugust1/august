@@ -185,9 +185,9 @@ document.addEventListener('click', e => {
 });
 
 // ── Gotoview hook: sync UI khi vào settings ──
-const _origGotoView = gotoView;
+const _origGotoViewSettings = window.gotoView || gotoView;
 window.gotoView = function(name, el) {
-  _origGotoView(name, el);
+  _origGotoViewSettings(name, el);
   if (name === 'settings') syncSettingsUI();
 };
 
@@ -211,6 +211,7 @@ function resetSnakeBest() {
   const bt = document.getElementById('snakeBestTop');
   if (b)  b.textContent  = '0';
   if (bt) bt.textContent = '0';
+  if (typeof updateHubScores === 'function') updateHubScores();
   toast('🔄 Đã reset kỷ lục rắn!', 'ok');
 }
 
