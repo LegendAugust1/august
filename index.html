@@ -220,7 +220,7 @@
     <div class="nav-item" onclick="gotoView('stats',this)"><span class="ico">📊</span>Thống Kê</div>
     <div class="nav-item" onclick="gotoView('robux',this)"><span class="ico">💎</span>Robux</div>
     <div class="sb-sec">Khác</div>
-    <div class="nav-item" onclick="gotoView('snake',this)"><span class="ico">🐍</span>Rắn Săn Mồi</div>
+    <div class="nav-item" onclick="gotoView('games',this)"><span class="ico">🕹️</span>Game<span class="nav-badge" id="badgeGames">4</span></div>
     <div class="nav-item" onclick="gotoView('notif',this)"><span class="ico">🔔</span>Thông Báo</div>
     <div class="nav-item" onclick="gotoView('notes',this)"><span class="ico">📝</span>Ghi Chú<span class="nav-badge" id="notesCount">0</span></div>
     <div class="nav-item" onclick="gotoView('settings',this)"><span class="ico">⚙️</span>Cài Đặt</div>
@@ -395,14 +395,96 @@
       <div class="notes-grid" id="notesGrid"></div>
     </div>
 
-    <!-- SNAKE VIEW -->
+    <!-- GAMES HUB VIEW -->
+    <div class="view" id="view-games">
+      <div class="topbar">
+        <div class="page-title">🕹️ Game</div>
+        <div class="topbar-actions">
+          <div class="snake-score-display">Chọn game để bắt đầu!</div>
+        </div>
+      </div>
+      <div class="games-hub-grid">
+        <!-- Rắn Săn Mồi -->
+        <div class="game-hub-card" onclick="launchGame('snake')">
+          <div class="ghc-glow" style="--gc:124,58,237"></div>
+          <div class="ghc-icon">🐍</div>
+          <div class="ghc-info">
+            <div class="ghc-title">Rắn Săn Mồi</div>
+            <div class="ghc-desc">Điều khiển con rắn ăn mồi, tránh đụng tường và chính mình. Lên cấp tốc độ tăng dần!</div>
+            <div class="ghc-tags">
+              <span class="ghc-tag">WASD / Mũi tên</span>
+              <span class="ghc-tag">Space = Pause</span>
+            </div>
+            <div class="ghc-best">Kỷ lục: <span id="hubSnakeBest" style="color:var(--yellow);font-family:'Orbitron',sans-serif">0</span></div>
+          </div>
+          <button class="btn btn-primary ghc-btn">▶ Chơi</button>
+        </div>
+        <!-- Dò Mìn -->
+        <div class="game-hub-card" onclick="launchGame('mine')">
+          <div class="ghc-glow" style="--gc:239,68,68"></div>
+          <div class="ghc-icon">💣</div>
+          <div class="ghc-info">
+            <div class="ghc-title">Dò Mìn</div>
+            <div class="ghc-desc">Tìm tất cả ô an toàn mà không chạm mìn. Nhấp chuột phải để cắm cờ, trái để mở ô.</div>
+            <div class="ghc-tags">
+              <span class="ghc-tag">Click = Mở ô</span>
+              <span class="ghc-tag">Chuột phải = Cờ</span>
+            </div>
+            <div class="ghc-best">Kỷ lục: <span id="hubMineBest" style="color:var(--yellow);font-family:'Orbitron',sans-serif">--</span></div>
+          </div>
+          <button class="btn btn-primary ghc-btn" style="background:linear-gradient(135deg,#be123c,#f43f5e);box-shadow:0 4px 18px rgba(239,68,68,.35)">▶ Chơi</button>
+        </div>
+        <!-- Lật Bài -->
+        <div class="game-hub-card" onclick="launchGame('memory')">
+          <div class="ghc-glow" style="--gc:5,150,105"></div>
+          <div class="ghc-icon">🃏</div>
+          <div class="ghc-info">
+            <div class="ghc-title">Lật Bài Trí Nhớ</div>
+            <div class="ghc-desc">Lật 2 bài mỗi lượt, tìm các cặp giống nhau. Hoàn thành nhanh nhất có thể!</div>
+            <div class="ghc-tags">
+              <span class="ghc-tag">Click = Lật bài</span>
+              <span class="ghc-tag">16 cặp bài</span>
+            </div>
+            <div class="ghc-best">Kỷ lục: <span id="hubMemoryBest" style="color:var(--yellow);font-family:'Orbitron',sans-serif">--</span></div>
+          </div>
+          <button class="btn btn-primary ghc-btn" style="background:linear-gradient(135deg,#059669,#10b981);box-shadow:0 4px 18px rgba(16,185,129,.35)">▶ Chơi</button>
+        </div>
+        <!-- Tetris -->
+        <div class="game-hub-card" onclick="launchGame('tetris')">
+          <div class="ghc-glow" style="--gc:8,145,178"></div>
+          <div class="ghc-icon">🧱</div>
+          <div class="ghc-info">
+            <div class="ghc-title">Tetris</div>
+            <div class="ghc-desc">Xếp các khối rơi thành hàng ngang hoàn chỉnh để ghi điểm. Tốc độ tăng theo cấp độ!</div>
+            <div class="ghc-tags">
+              <span class="ghc-tag">← → = Di chuyển</span>
+              <span class="ghc-tag">↑ = Xoay</span>
+              <span class="ghc-tag">↓ = Rơi nhanh</span>
+              <span class="ghc-tag">Space = Rơi thẳng</span>
+            </div>
+            <div class="ghc-best">Kỷ lục: <span id="hubTetrisBest" style="color:var(--yellow);font-family:'Orbitron',sans-serif">0</span></div>
+          </div>
+          <button class="btn btn-primary ghc-btn" style="background:linear-gradient(135deg,#0891b2,#06b6d4);box-shadow:0 4px 18px rgba(6,182,212,.35)">▶ Chơi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SNAKE GAME VIEW -->
     <div class="view" id="view-snake">
       <div class="topbar">
-        <div class="page-title">Rắn Săn Mồi</div>
+        <div class="page-title">🐍 Rắn Săn Mồi</div>
         <div class="topbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="gotoView('games', document.querySelector('.nav-item:nth-child(7)'))">← Về Game Hub</button>
           <div class="snake-score-display">Điểm: <span id="snakeScoreTop">0</span></div>
           <div class="snake-score-display">Cao nhất: <span id="snakeBestTop">0</span></div>
         </div>
+      </div>
+      <!-- Hướng dẫn -->
+      <div class="game-guide-bar">
+        <span class="ggb-item"><kbd>W A S D</kbd> hoặc <kbd>↑ ↓ ← →</kbd> Điều khiển hướng</span>
+        <span class="ggb-item"><kbd>Space</kbd> Tạm dừng / Tiếp tục</span>
+        <span class="ggb-item">🍎 +10~×level điểm &nbsp;⭐ +25×level điểm bonus</span>
+        <span class="ggb-item">Rắn xuyên tường được!</span>
       </div>
       <div class="snake-wrap">
         <div class="snake-panel">
@@ -429,6 +511,137 @@
             <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center">Space = Tạm dừng</div>
           </div>
           <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="snakeReset()">🔄 Chơi Lại</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINESWEEPER VIEW -->
+    <div class="view" id="view-mine">
+      <div class="topbar">
+        <div class="page-title">💣 Dò Mìn</div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="gotoView('games', document.querySelector('.nav-item:nth-child(7)'))">← Về Game Hub</button>
+          <div class="snake-score-display">⏱ <span id="mineTimer">0</span>s</div>
+          <div class="snake-score-display">💣 <span id="mineFlagsLeft">0</span></div>
+        </div>
+      </div>
+      <div class="game-guide-bar">
+        <span class="ggb-item"><kbd>Click trái</kbd> Mở ô</span>
+        <span class="ggb-item"><kbd>Click phải</kbd> Cắm / bỏ cờ 🚩</span>
+        <span class="ggb-item">Số trên ô = số mìn xung quanh</span>
+        <span class="ggb-item">Mở hết ô an toàn = thắng!</span>
+      </div>
+      <div class="mine-layout">
+        <div class="mine-left">
+          <div class="mine-diff-row">
+            <button class="mine-diff-btn active" data-diff="easy" onclick="mineSetDiff(this,'easy')">Dễ<br><span>9×9 · 10 mìn</span></button>
+            <button class="mine-diff-btn" data-diff="med" onclick="mineSetDiff(this,'med')">Vừa<br><span>16×16 · 40 mìn</span></button>
+            <button class="mine-diff-btn" data-diff="hard" onclick="mineSetDiff(this,'hard')">Khó<br><span>16×30 · 99 mìn</span></button>
+          </div>
+          <div id="mineBoardWrap">
+            <div id="mineBoard"></div>
+          </div>
+          <div id="mineMsg" class="mine-msg"></div>
+        </div>
+        <div class="mine-right">
+          <div class="snake-info-card"><div class="snake-info-label">Thời gian</div><div class="snake-info-val" id="mineTimerBig" style="color:var(--accent3)">0s</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Cờ còn lại</div><div class="snake-info-val" id="mineFlagsLeftBig" style="color:var(--red)">0</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Kỷ lục (Dễ)</div><div class="snake-info-val" id="mineBestEasy" style="color:var(--yellow);font-size:16px">--</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Kỷ lục (Vừa)</div><div class="snake-info-val" id="mineBestMed" style="color:var(--yellow);font-size:16px">--</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Kỷ lục (Khó)</div><div class="snake-info-val" id="mineBestHard" style="color:var(--yellow);font-size:16px">--</div></div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:4px" onclick="mineNewGame()">🔄 Ván mới</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMORY CARD VIEW -->
+    <div class="view" id="view-memory">
+      <div class="topbar">
+        <div class="page-title">🃏 Lật Bài Trí Nhớ</div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="gotoView('games', document.querySelector('.nav-item:nth-child(7)'))">← Về Game Hub</button>
+          <div class="snake-score-display">⏱ <span id="memTimer">0</span>s</div>
+          <div class="snake-score-display">🎯 <span id="memMoves">0</span> lượt</div>
+        </div>
+      </div>
+      <div class="game-guide-bar">
+        <span class="ggb-item"><kbd>Click</kbd> Lật bài</span>
+        <span class="ggb-item">Lật 2 bài mỗi lượt — tìm cặp giống nhau</span>
+        <span class="ggb-item">16 cặp bài, tổng 32 lá</span>
+        <span class="ggb-item">Lật hết = thắng! Ít lượt = nhiều sao ⭐</span>
+      </div>
+      <div class="memory-layout">
+        <div class="memory-main">
+          <div class="memory-grid" id="memoryGrid"></div>
+          <div id="memMsg" class="mine-msg" style="text-align:center;margin-top:16px"></div>
+        </div>
+        <div class="memory-side">
+          <div class="snake-info-card"><div class="snake-info-label">Thời gian</div><div class="snake-info-val" id="memTimerBig" style="color:var(--accent3)">0s</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Số lượt</div><div class="snake-info-val" id="memMovesBig" style="color:var(--neon)">0</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Cặp tìm được</div><div class="snake-info-val" id="memPairs" style="color:var(--green)">0 / 16</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Kỷ lục (lượt)</div><div class="snake-info-val" id="memBest" style="color:var(--yellow);font-size:16px">--</div></div>
+          <div class="memory-how">
+            <div class="snake-ctrl-title">Xếp hạng ⭐</div>
+            <div style="font-size:12px;color:var(--muted);line-height:2">
+              ⭐⭐⭐ ≤ 20 lượt<br>
+              ⭐⭐ ≤ 30 lượt<br>
+              ⭐ ≤ 45 lượt<br>
+              😅 &gt; 45 lượt
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:4px" onclick="memNewGame()">🔄 Ván mới</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TETRIS VIEW -->
+    <div class="view" id="view-tetris">
+      <div class="topbar">
+        <div class="page-title">🧱 Tetris</div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="gotoView('games', document.querySelector('.nav-item:nth-child(7)'))">← Về Game Hub</button>
+          <div class="snake-score-display">Điểm: <span id="tetScoreTop">0</span></div>
+          <div class="snake-score-display">Best: <span id="tetBestTop">0</span></div>
+        </div>
+      </div>
+      <div class="game-guide-bar">
+        <span class="ggb-item"><kbd>← →</kbd> Di chuyển</span>
+        <span class="ggb-item"><kbd>↑</kbd> Xoay khối</span>
+        <span class="ggb-item"><kbd>↓</kbd> Rơi nhanh</span>
+        <span class="ggb-item"><kbd>Space</kbd> Rơi thẳng xuống</span>
+        <span class="ggb-item"><kbd>P</kbd> Tạm dừng</span>
+        <span class="ggb-item">Xóa nhiều hàng cùng lúc = điểm nhân!</span>
+      </div>
+      <div class="snake-wrap" style="justify-content:center">
+        <div class="snake-panel">
+          <canvas id="tetCanvas" width="240" height="480"></canvas>
+          <div class="snake-overlay" id="tetOverlay">
+            <div class="snake-over-icon">🧱</div>
+            <div class="snake-over-title" id="tetOverTitle">Tetris</div>
+            <div class="snake-over-sub" id="tetOverSub">← → Di chuyển · ↑ Xoay · Space Rơi thẳng</div>
+            <button class="btn btn-primary" id="tetStartBtn" onclick="tetStart()" style="background:linear-gradient(135deg,#0891b2,#06b6d4);box-shadow:0 4px 18px rgba(6,182,212,.35)">▶ Bắt Đầu</button>
+          </div>
+        </div>
+        <div class="snake-side">
+          <div class="snake-info-card"><div class="snake-info-label">Điểm</div><div class="snake-info-val" id="tetScore" style="color:var(--accent3)">0</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Kỷ lục</div><div class="snake-info-val" id="tetBest" style="color:var(--yellow)">0</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Cấp độ</div><div class="snake-info-val" id="tetLevel" style="color:var(--green)">1</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Hàng xóa</div><div class="snake-info-val" id="tetLines" style="color:var(--neon)">0</div></div>
+          <div class="snake-info-card" style="padding:12px 16px">
+            <div class="snake-info-label" style="margin-bottom:8px">Khối tiếp theo</div>
+            <canvas id="tetNextCanvas" width="80" height="80"></canvas>
+          </div>
+          <div class="snake-controls">
+            <div class="snake-ctrl-title">Điều khiển</div>
+            <div style="font-size:11px;color:var(--muted);line-height:2.1">
+              <b style="color:var(--accent3)">← →</b> Di chuyển<br>
+              <b style="color:var(--accent3)">↑</b> Xoay khối<br>
+              <b style="color:var(--accent3)">↓</b> Rơi nhanh<br>
+              <b style="color:var(--accent3)">Space</b> Rơi thẳng<br>
+              <b style="color:var(--accent3)">P</b> Tạm dừng
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="tetReset()">🔄 Chơi Lại</button>
         </div>
       </div>
     </div>
@@ -554,6 +767,10 @@
 <script src="data.js"></script>
 <script src="app.js"></script>
 <script src="snake.js"></script>
+<script src="mine.js"></script>
+<script src="memory.js"></script>
+<script src="tetris.js"></script>
+<script src="games.js"></script>
 <script src="settings.js"></script>
 <script src="notes.js"></script>
 <script src="login.js"></script>
