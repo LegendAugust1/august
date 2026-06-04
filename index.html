@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roblox Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── LOGIN GATE ── */
+#loginGate {
+  position:fixed; inset:0; z-index:9999;
+  display:none; align-items:center; justify-content:center;
+  background:var(--bg);
+  animation: loginFadeIn .5s ease;
+}
+@keyframes loginFadeIn  { from { opacity:0 } to { opacity:1 } }
+@keyframes loginFadeOut { from { opacity:1 } to { opacity:0 } }
+
+.login-bg-blur {
+  position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 60% 50% at 20% 30%, rgba(124,58,237,.18) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 80% 70%, rgba(168,85,247,.13) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 35% at 60% 20%, rgba(99,102,241,.1) 0%, transparent 70%);
+}
+
+#loginBox {
+  position:relative; z-index:1;
+  background: linear-gradient(145deg, rgba(15,15,36,.97), rgba(22,22,58,.95));
+  border: 1px solid rgba(168,85,247,.28);
+  border-radius: 24px;
+  padding: 40px 36px 36px;
+  width: 380px; max-width: 94vw;
+  box-shadow: 0 32px 80px rgba(0,0,0,.6), 0 0 60px rgba(124,58,237,.12);
+  transition: border-color .3s, box-shadow .3s;
+}
+
+.login-logo {
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  margin-bottom:28px;
+}
+.login-logo-icon {
+  width:56px; height:56px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px;
+  box-shadow: 0 0 30px rgba(124,58,237,.45);
+  animation: float 3s ease-in-out infinite;
+}
+.login-title {
+  font-family:'Orbitron',sans-serif; font-size:17px; font-weight:700;
+  background: linear-gradient(135deg, var(--accent2), var(--neon));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  letter-spacing:.08em; text-align:center;
+}
+.login-sub {
+  font-size:12px; color:var(--muted); text-align:center;
+}
+
+.login-field {
+  margin-bottom:14px;
+}
+.login-field label {
+  display:block; font-size:11px; font-weight:600;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+  margin-bottom:6px;
+}
+.login-pw-wrap {
+  position:relative; display:flex; align-items:center;
+}
+.login-pw-wrap .fi {
+  padding-right:42px; width:100%;
+  background:rgba(4,4,14,.7);
+  border-color: rgba(120,60,255,.22);
+  font-size:14px; letter-spacing:.04em;
+}
+.login-pw-wrap .fi:focus {
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(124,58,237,.12);
+}
+.login-pw-wrap .fi.err {
+  border-color:var(--red) !important;
+  box-shadow:0 0 0 3px rgba(239,68,68,.1) !important;
+}
+.eye-btn {
+  position:absolute; right:11px;
+  background:none; border:none; cursor:pointer;
+  font-size:16px; line-height:1; padding:0;
+  opacity:.6; transition:opacity .2s;
+}
+.eye-btn:hover { opacity:1; }
+
+.login-err {
+  display:flex; align-items:center; gap:7px;
+  background: rgba(239,68,68,.08);
+  border: 1px solid rgba(239,68,68,.25);
+  border-radius:9px; padding:9px 13px;
+  font-size:12px; color:#fca5a5;
+  margin-bottom:14px;
+  opacity:0; transform:translateY(-4px);
+  transition: opacity .25s, transform .25s;
+  pointer-events:none;
+}
+.login-err.show { opacity:1; transform:translateY(0); pointer-events:all; }
+
+#loginBtn {
+  width:100%; padding:12px;
+  font-size:14px; font-weight:600;
+  border-radius:12px; border:none; cursor:pointer;
+  font-family:'Sora',sans-serif; letter-spacing:.03em;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color:#fff;
+  box-shadow: 0 4px 20px rgba(124,58,237,.4);
+  transition: all .2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+#loginBtn:hover:not(:disabled) {
+  transform:translateY(-1px);
+  box-shadow:0 6px 28px rgba(124,58,237,.55);
+}
+#loginBtn:disabled { cursor:not-allowed; opacity:.85; }
+
+.login-spinner {
+  width:16px; height:16px;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spin { to { transform:rotate(360deg) } }
+
+.login-footer {
+  margin-top:18px; text-align:center;
+  font-size:11px; color:var(--muted); opacity:.6;
+}
+
+/* shake animation */
+@keyframes shake {
+  0%,100% { transform:translateX(0) }
+  18%      { transform:translateX(-7px) }
+  36%      { transform:translateX(7px) }
+  54%      { transform:translateX(-5px) }
+  72%      { transform:translateX(5px) }
+  88%      { transform:translateX(-3px) }
+}
+#loginBox.shake { animation:shake .42s ease; }
+
+/* ── NOTES GRID ── */
+.notes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px }
+.note-card { background:var(--nc-bg,rgba(124,58,237,.12)); border:1px solid var(--nc-border,rgba(168,85,247,.3)); border-radius:16px; padding:16px; cursor:pointer; transition:transform .22s,box-shadow .22s; animation:fadeUp .4s ease both; display:flex; flex-direction:column; gap:10px; position:relative; overflow:hidden }
+.note-card::after { content:""; position:absolute; top:0; left:-100%; width:55%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent); transition:left .5s }
+.note-card:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(0,0,0,.25) }
+.note-card:hover::after { left:140% }
+.note-card-header { display:flex; align-items:center; gap:8px }
+.note-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; box-shadow:0 0 6px currentColor }
+.note-title { flex:1; font-size:14px; font-weight:700; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.note-del-btn { background:none; border:none; color:var(--muted); font-size:13px; cursor:pointer; padding:2px 5px; border-radius:5px; opacity:0; transition:opacity .18s,background .18s,color .18s; flex-shrink:0 }
+.note-card:hover .note-del-btn { opacity:1 }
+.note-del-btn:hover { background:rgba(239,68,68,.18); color:var(--red) }
+.note-content-prev { font-size:12px; color:var(--muted); line-height:1.65; max-height:72px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical }
+.note-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:8px; border-top:1px solid rgba(255,255,255,.05) }
+.note-date { font-size:10px; color:var(--muted) }
+.note-chars { font-size:10px; color:var(--muted); opacity:.6 }
+.note-color-palette { display:flex; gap:10px; flex-wrap:wrap }
+.note-color-dot { width:28px; height:28px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform .2s,border-color .2s; flex-shrink:0 }
+.note-color-dot:hover { transform:scale(1.15) }
+.note-color-dot.active { border-color:#fff; transform:scale(1.18); box-shadow:0 0 10px rgba(255,255,255,.3) }
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<canvas id="fgCanvas"></canvas>
+<div class="cur-dot" id="cDot"></div>
+<div class="cur-ring" id="cRing"></div>
+
+<!-- ── LOGIN GATE ── -->
+<div id="loginGate">
+  <div class="login-bg-blur"></div>
+  <div id="loginBox">
+    <div class="login-logo">
+      <div class="login-logo-icon">🎮</div>
+      <div class="login-title">ROBLOX MANAGER</div>
+      <div class="login-sub">Nhập mật khẩu để tiếp tục</div>
+    </div>
+
+    <div class="login-field">
+      <label>Mật khẩu</label>
+      <div class="login-pw-wrap">
+        <input class="fi" id="loginInput" type="password" placeholder="••••••••••••">
+        <button class="eye-btn" type="button" onclick="togglePw()" title="Hiện/ẩn mật khẩu">
+          <span id="eyeIcon">👁️</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="login-err" id="loginErr">
+      🔒 Mật khẩu không đúng, vui lòng thử lại.
+    </div>
+
+    <button id="loginBtn" onclick="doLogin()">🔓 Vào Dashboard</button>
+
+    <div class="login-footer">Phiên đăng nhập giữ trong 8 giờ</div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">🎮</div>
+      <h1>ROBLOX<br>MANAGER</h1>
+      <span>Personal Dashboard</span>
+    </div>
+    <div class="sb-sec">Chính</div>
+    <div class="nav-item active" onclick="gotoView('accounts',this)"><span class="ico">👤</span>Tài Khoản<span class="nav-badge" id="badgeTotal">0</span></div>
+    <div class="nav-item" onclick="gotoView('stats',this)"><span class="ico">📊</span>Thống Kê</div>
+    <div class="nav-item" onclick="gotoView('robux',this)"><span class="ico">💎</span>Robux</div>
+    <div class="sb-sec">Khác</div>
+    <div class="nav-item" onclick="gotoView('snake',this)"><span class="ico">🐍</span>Rắn Săn Mồi</div>
+    <div class="nav-item" onclick="gotoView('notif',this)"><span class="ico">🔔</span>Thông Báo</div>
+    <div class="nav-item" onclick="gotoView('notes',this)"><span class="ico">📝</span>Ghi Chú<span class="nav-badge" id="notesCount">0</span></div>
+    <div class="nav-item" onclick="gotoView('settings',this)"><span class="ico">⚙️</span>Cài Đặt</div>
+    <div class="sb-footer">v2.0 · Local Storage</div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ACCOUNTS VIEW -->
+    <div class="view active" id="view-accounts">
+      <div class="topbar">
+        <div class="page-title">Tài Khoản Roblox</div>
+        <div class="topbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="exportData()">📤 Xuất</button>
+          <button class="btn btn-primary" onclick="openAdd()">＋ Thêm Tài Khoản</button>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-ico">🗂️</div><div class="stat-lbl">Tổng</div><div class="stat-val" id="sTotal" style="color:var(--accent3)">0</div><div class="stat-sub">tài khoản</div></div>
+        <div class="stat-card"><div class="stat-ico">🟢</div><div class="stat-lbl">Online</div><div class="stat-val" id="sOnline" style="color:var(--green)">0</div><div class="stat-sub">hoạt động</div></div>
+        <div class="stat-card"><div class="stat-ico">💰</div><div class="stat-lbl">Tổng Robux</div><div class="stat-val" id="sRobux" style="color:var(--yellow)">0</div><div class="stat-sub">R$</div></div>
+        <div class="stat-card"><div class="stat-ico">🚫</div><div class="stat-lbl">Bị Ban</div><div class="stat-val" id="sBanned" style="color:var(--red)">0</div><div class="stat-sub">tài khoản</div></div>
+      </div>
+      <div class="toolbar">
+        <div class="search-box"><span>🔍</span><input id="searchQ" placeholder="Tìm username, tag..." oninput="renderCards()"></div>
+        <select class="flt" id="filterSt" onchange="renderCards()">
+          <option value="all">Tất cả</option>
+          <option value="online">Online</option>
+          <option value="offline">Offline</option>
+          <option value="banned">Bị ban</option>
+        </select>
+        <select class="flt" id="sortBy" onchange="renderCards()">
+          <option value="date">Mới nhất</option>
+          <option value="name">Tên A→Z</option>
+          <option value="robux">Robux ↓</option>
+        </select>
+      </div>
+      <div class="grid" id="cardGrid"></div>
+    </div>
+
+    <!-- COMING SOON VIEWS -->
+    <div class="view" id="view-stats"><div class="topbar"><div class="page-title">Thống Kê</div></div><div class="coming"><div class="coming-ico">📊</div><h2>Sắp Ra Mắt</h2><p>Trang thống kê tổng quan đang được phát triển.</p></div></div>
+    <div class="view" id="view-robux"><div class="topbar"><div class="page-title">Robux</div></div><div class="coming"><div class="coming-ico">💎</div><h2>Sắp Ra Mắt</h2><p>Quản lý Robux & lịch sử giao dịch sẽ có ở đây.</p></div></div>
+    <div class="view" id="view-notif"><div class="topbar"><div class="page-title">Thông Báo</div></div><div class="coming"><div class="coming-ico">🔔</div><h2>Sắp Ra Mắt</h2><p>Hệ thống thông báo sẽ được thêm vào sau.</p></div></div>
+
+    <!-- SETTINGS VIEW -->
+    <div class="view" id="view-settings">
+      <div class="topbar">
+        <div class="page-title">Cài Đặt</div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary btn-sm" onclick="saveSettings()">💾 Lưu thay đổi</button>
+        </div>
+      </div>
+      <div class="settings-grid">
+        <div class="settings-section">
+          <div class="settings-section-title">🎨 Giao Diện</div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Tên Dashboard</div><div class="settings-item-sub">Tên hiển thị trên sidebar</div></div>
+            <input class="fi settings-input" id="setDashName" placeholder="ROBLOX MANAGER">
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Màu Accent</div><div class="settings-item-sub">Màu chủ đạo của giao diện</div></div>
+            <div class="color-palette" id="colorPalette">
+              <div class="color-dot active" data-color="purple" style="background:linear-gradient(135deg,#7c3aed,#a855f7)" title="Tím (mặc định)"></div>
+              <div class="color-dot" data-color="blue" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6)" title="Xanh dương"></div>
+              <div class="color-dot" data-color="cyan" style="background:linear-gradient(135deg,#0891b2,#06b6d4)" title="Xanh lam"></div>
+              <div class="color-dot" data-color="green" style="background:linear-gradient(135deg,#059669,#10b981)" title="Xanh lá"></div>
+              <div class="color-dot" data-color="rose" style="background:linear-gradient(135deg,#be123c,#f43f5e)" title="Hồng đỏ"></div>
+              <div class="color-dot" data-color="orange" style="background:linear-gradient(135deg,#c2410c,#f97316)" title="Cam"></div>
+              <div class="color-dot" data-color="gold" style="background:linear-gradient(135deg,#a16207,#eab308)" title="Vàng"></div>
+              <div class="color-dot" data-color="pink" style="background:linear-gradient(135deg,#9d174d,#ec4899)" title="Hồng"></div>
+            </div>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Font Chữ</div><div class="settings-item-sub">Font hiển thị toàn bộ giao diện</div></div>
+            <select class="fi settings-select" id="setFont">
+              <option value="Sora">Sora (mặc định)</option>
+              <option value="Inter">Inter</option>
+              <option value="Rajdhani">Rajdhani</option>
+              <option value="Exo 2">Exo 2</option>
+              <option value="Ubuntu">Ubuntu</option>
+              <option value="Nunito">Nunito</option>
+            </select>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Hiệu Ứng Galaxy</div><div class="settings-item-sub">Nền vũ trụ, sao, sao băng</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="setGalaxy" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Con Trỏ Tùy Chỉnh</div><div class="settings-item-sub">Hiệu ứng con trỏ chuột</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="setCursor" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Hiệu Ứng Hover Card</div><div class="settings-item-sub">Animation khi rê chuột vào card</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="setCardHover" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Cỡ Chữ</div><div class="settings-item-sub">Kích thước chữ giao diện</div></div>
+            <div class="size-selector" id="sizeSelector">
+              <div class="size-opt" data-size="small">Nhỏ</div>
+              <div class="size-opt active" data-size="normal">Vừa</div>
+              <div class="size-opt" data-size="large">Lớn</div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">🗄️ Dữ Liệu</div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Import Backup</div><div class="settings-item-sub">Khôi phục từ file JSON đã xuất</div></div>
+            <label class="btn btn-ghost btn-sm" style="cursor:pointer">📥 Chọn file<input type="file" accept=".json" id="importFile" style="display:none" onchange="importData(event)"></label>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Xuất Dữ Liệu</div><div class="settings-item-sub">Lưu tất cả tài khoản ra file JSON</div></div>
+            <button class="btn btn-ghost btn-sm" onclick="exportData()">📤 Xuất JSON</button>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label">Thống Kê Lưu Trữ</div><div class="settings-item-sub">Dung lượng localStorage đang dùng</div></div>
+            <div class="storage-info" id="storageInfo">— KB</div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label" style="color:var(--red)">Xóa Toàn Bộ Tài Khoản</div><div class="settings-item-sub">Xóa vĩnh viễn tất cả dữ liệu</div></div>
+            <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">🗑️ Xóa tất cả</button>
+          </div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label" style="color:var(--red)">Reset Kỷ Lục Rắn</div><div class="settings-item-sub">Xóa điểm cao nhất game rắn</div></div>
+            <button class="btn btn-danger btn-sm" onclick="resetSnakeBest()">🔄 Reset</button>
+          </div>
+        </div>
+        <div class="settings-section settings-about">
+          <div class="settings-section-title">ℹ️ Thông Tin</div>
+          <div class="about-card">
+            <div class="about-icon">🎮</div>
+            <div class="about-name" id="aboutName">ROBLOX MANAGER</div>
+            <div class="about-ver">Phiên bản 2.1.0</div>
+            <div class="about-desc">Dashboard quản lý tài khoản Roblox cá nhân. Dữ liệu lưu hoàn toàn trên máy bạn, không gửi lên bất kỳ server nào.</div>
+            <div class="about-tags">
+              <span class="tag">Local Storage</span><span class="tag">No Server</span>
+              <span class="tag">TOTP 2FA</span><span class="tag">Snake Game</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES VIEW -->
+    <div class="view" id="view-notes">
+      <div class="topbar">
+        <div class="page-title">Ghi Chú</div>
+        <div class="topbar-actions">
+          <button class="btn btn-primary" onclick="openAddNote()">＋ Ghi Chú Mới</button>
+        </div>
+      </div>
+      <div class="toolbar" style="margin-bottom:20px">
+        <div class="search-box"><span>🔍</span><input id="notesSearch" placeholder="Tìm tiêu đề, nội dung..." oninput="renderNotes()"></div>
+        <select class="flt" id="notesFilter" onchange="renderNotes()">
+          <option value="all">Tất cả màu</option>
+          <option value="purple">🟣 Tím</option>
+          <option value="blue">🔵 Xanh</option>
+          <option value="green">🟢 Lá</option>
+          <option value="yellow">🟡 Vàng</option>
+          <option value="red">🔴 Đỏ</option>
+          <option value="cyan">🩵 Lam</option>
+        </select>
+      </div>
+      <div id="notesEmpty" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:14px;color:var(--muted);text-align:center">
+        <div style="font-size:52px;opacity:.38;animation:float 3s ease-in-out infinite">📝</div>
+        <h2 style="font-family:'Orbitron',sans-serif;font-size:17px;color:var(--accent3)">Chưa có ghi chú nào</h2>
+        <p style="font-size:13px;max-width:260px;line-height:1.6">Nhấn <strong>＋ Ghi Chú Mới</strong> để bắt đầu.</p>
+      </div>
+      <div class="notes-grid" id="notesGrid"></div>
+    </div>
+
+    <!-- SNAKE VIEW -->
+    <div class="view" id="view-snake">
+      <div class="topbar">
+        <div class="page-title">Rắn Săn Mồi</div>
+        <div class="topbar-actions">
+          <div class="snake-score-display">Điểm: <span id="snakeScoreTop">0</span></div>
+          <div class="snake-score-display">Cao nhất: <span id="snakeBestTop">0</span></div>
+        </div>
+      </div>
+      <div class="snake-wrap">
+        <div class="snake-panel">
+          <canvas id="snakeCanvas" width="400" height="400"></canvas>
+          <div class="snake-overlay" id="snakeOverlay">
+            <div class="snake-over-icon">🐍</div>
+            <div class="snake-over-title" id="snakeOverTitle">Rắn Săn Mồi</div>
+            <div class="snake-over-sub" id="snakeOverSub">Dùng WASD hoặc phím mũi tên để điều khiển</div>
+            <button class="btn btn-primary" id="snakeStartBtn" onclick="snakeStart()">▶ Bắt Đầu</button>
+          </div>
+        </div>
+        <div class="snake-side">
+          <div class="snake-info-card"><div class="snake-info-label">Điểm hiện tại</div><div class="snake-info-val" id="snakeScore" style="color:var(--accent3)">0</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Kỷ lục</div><div class="snake-info-val" id="snakeBest" style="color:var(--yellow)">0</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Cấp độ</div><div class="snake-info-val" id="snakeLevel" style="color:var(--green)">1</div></div>
+          <div class="snake-info-card"><div class="snake-info-label">Độ dài</div><div class="snake-info-val" id="snakeLen" style="color:var(--neon)">1</div></div>
+          <div class="snake-controls">
+            <div class="snake-ctrl-title">Điều khiển</div>
+            <div class="snake-ctrl-grid">
+              <div></div><div class="snake-key">W ↑</div><div></div>
+              <div class="snake-key">A ←</div><div class="snake-key">S ↓</div><div class="snake-key">D →</div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Hoặc phím mũi tên</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center">Space = Tạm dừng</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="snakeReset()">🔄 Chơi Lại</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL ADD/EDIT -->
+<div class="overlay" id="ovMain" onclick="ovClick(event,'ovMain')">
+  <div class="modal">
+    <div class="modal-title" id="modTitle">➕ Thêm Tài Khoản</div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Username *</label><input class="fi" id="fUser" placeholder="Username Roblox"></div>
+      <div class="fg"><label class="fl">Display Name</label><input class="fi" id="fDisp" placeholder="Tên hiển thị"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Mật khẩu</label><input class="fi" id="fPass" type="password" placeholder="••••••••"></div>
+      <div class="fg"><label class="fl">Email</label><input class="fi" id="fEmail" placeholder="email@gmail.com"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Robux</label><input class="fi" id="fRobux" type="number" placeholder="0" min="0"></div>
+      <div class="fg"><label class="fl">Trạng thái</label>
+        <select class="fi" id="fStatus">
+          <option value="offline">Offline</option>
+          <option value="online">Online</option>
+          <option value="banned">Bị ban</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">🔐 TOTP Secret Key (Google Authenticator)</label>
+      <div style="display:flex;gap:7px">
+        <input class="fi" id="fTotp" placeholder="JBSWY3DPEHPK3PXP" style="font-family:monospace;letter-spacing:.06em;flex:1">
+        <button class="btn btn-ghost btn-sm" type="button" onclick="previewTotp()">Thử</button>
+      </div>
+      <div class="totp-preview-box" id="totpPrev">
+        <span style="font-size:11px;color:var(--muted)">Mã thử:</span>
+        <span id="totpPrevCode" style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--accent3);letter-spacing:.18em"></span>
+        <span style="font-size:11px;color:var(--green)">✓ Hợp lệ</span>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:5px">Secret key khi bật 2FA Roblox → "Enter key manually"</div>
+    </div>
+    <div class="fg"><label class="fl">Tags (cách bởi dấu phẩy)</label><input class="fi" id="fTags" placeholder="main, farm, alt..."></div>
+    <div class="fg"><label class="fl">Ghi chú</label><input class="fi" id="fNote" placeholder="Ghi chú tùy ý..."></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOv('ovMain')">Hủy</button>
+      <button class="btn btn-primary" onclick="saveAcc()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DELETE -->
+<div class="overlay" id="ovDel" onclick="ovClick(event,'ovDel')">
+  <div class="modal" style="max-width:370px">
+    <div class="modal-title">🗑️ Xóa Tài Khoản</div>
+    <div class="confirm-box">Bạn có chắc muốn xóa <strong id="delName"></strong>? Hành động này không thể hoàn tác.</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOv('ovDel')">Hủy</button>
+      <button class="btn btn-danger" onclick="doDelete()">🗑️ Xóa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRM CLEAR ALL -->
+<div class="overlay" id="ovClear" onclick="ovClick(event,'ovClear')">
+  <div class="modal" style="max-width:370px">
+    <div class="modal-title">⚠️ Xóa Toàn Bộ</div>
+    <div class="confirm-box">Bạn có chắc muốn xóa <strong>tất cả tài khoản</strong>? Hành động này <strong>không thể hoàn tác</strong> và sẽ xóa toàn bộ dữ liệu.</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOv('ovClear')">Hủy</button>
+      <button class="btn btn-danger" onclick="doClearAll()">🗑️ Xóa tất cả</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL GHI CHÚ -->
+<div class="overlay" id="ovNote" onclick="ovClick(event,'ovNote')">
+  <div class="modal" style="width:520px">
+    <div class="modal-title" id="noteModTitle">📝 Ghi Chú Mới</div>
+    <div class="fg">
+      <label class="fl">Tiêu đề</label>
+      <input class="fi" id="noteTitle" placeholder="Tiêu đề ghi chú...">
+    </div>
+    <div class="fg">
+      <label class="fl">Nội dung</label>
+      <textarea class="fi" id="noteContent" rows="8" placeholder="Viết ghi chú của bạn ở đây..." style="resize:vertical;line-height:1.6;min-height:140px"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">Màu nhãn</label>
+      <div class="note-color-palette">
+        <div class="note-color-dot active" data-color="purple" style="background:linear-gradient(135deg,#7c3aed,#a855f7)" title="Tím"></div>
+        <div class="note-color-dot" data-color="blue"   style="background:linear-gradient(135deg,#1d4ed8,#3b82f6)" title="Xanh"></div>
+        <div class="note-color-dot" data-color="green"  style="background:linear-gradient(135deg,#059669,#10b981)" title="Lá"></div>
+        <div class="note-color-dot" data-color="yellow" style="background:linear-gradient(135deg,#a16207,#eab308)" title="Vàng"></div>
+        <div class="note-color-dot" data-color="red"    style="background:linear-gradient(135deg,#be123c,#f43f5e)" title="Đỏ"></div>
+        <div class="note-color-dot" data-color="cyan"   style="background:linear-gradient(135deg,#0891b2,#06b6d4)" title="Lam"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span style="font-size:11px;color:var(--muted)">Ctrl+S để lưu nhanh</span>
+      <div style="display:flex;gap:9px">
+        <button class="btn btn-ghost" onclick="closeOv('ovNote')">Hủy</button>
+        <button class="btn btn-primary" onclick="saveNote()">💾 Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL XÓA GHI CHÚ -->
+<div class="overlay" id="ovDelNote" onclick="ovClick(event,'ovDelNote')">
+  <div class="modal" style="max-width:370px">
+    <div class="modal-title">🗑️ Xóa Ghi Chú</div>
+    <div class="confirm-box">Bạn có chắc muốn xóa <strong id="delNoteName"></strong>? Hành động này không thể hoàn tác.</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeOv('ovDelNote')">Hủy</button>
+      <button class="btn btn-danger" onclick="doDelNote()">🗑️ Xóa</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script src="snake.js"></script>
+<script src="settings.js"></script>
+<script src="notes.js"></script>
+<script src="login.js"></script>
+</body>
+</html>
