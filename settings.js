@@ -26,6 +26,8 @@ const FONT_IMPORTS = {
 
 let currentSettings = {
   dashName:  'ROBLOX MANAGER',
+  tabName:   "August's Web",
+  favicon:   '',
   color:     'purple',
   font:      'Sora',
   galaxy:    true,
@@ -46,6 +48,7 @@ function loadSettings() {
 function saveSettings() {
   // đọc giá trị từ UI
   currentSettings.dashName  = document.getElementById('setDashName').value.trim() || 'ROBLOX MANAGER';
+  currentSettings.tabName   = document.getElementById('setTabName').value.trim() || "August's Web";
   currentSettings.font      = document.getElementById('setFont').value;
   currentSettings.galaxy    = document.getElementById('setGalaxy').checked;
   currentSettings.cursor    = document.getElementById('setCursor').checked;
@@ -67,6 +70,21 @@ function saveSettings() {
 // ── Apply ──
 function applySettings(s) {
   const root = document.documentElement;
+
+  // tên tab
+  document.title = s.tabName || "August's Web";
+
+  // favicon
+  if (s.favicon) {
+    let link = document.getElementById('dynamic-favicon');
+    if (!link) {
+      link = document.createElement('link');
+      link.id = 'dynamic-favicon';
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.href = s.favicon;
+  }
 
   // màu accent
   const theme = COLOR_THEMES[s.color] || COLOR_THEMES.purple;
@@ -131,6 +149,9 @@ function syncSettingsUI() {
   const s = currentSettings;
   const nameEl = document.getElementById('setDashName');
   if (nameEl) nameEl.value = s.dashName || '';
+
+  const tabEl = document.getElementById('setTabName');
+  if (tabEl) tabEl.value = s.tabName || '';
 
   const fontEl = document.getElementById('setFont');
   if (fontEl) fontEl.value = s.font || 'Sora';
@@ -213,6 +234,20 @@ function resetSnakeBest() {
   if (bt) bt.textContent = '0';
   if (typeof updateHubScores === 'function') updateHubScores();
   toast('🔄 Đã reset kỷ lục rắn!', 'ok');
+}
+
+// ── Favicon từ file ──
+function previewFavicon(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentSettings.favicon = e.target.result;
+    applySettings(currentSettings);
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(currentSettings));
+    toast('🖼️ Đã cập nhật favicon!', 'ok');
+  };
+  reader.readAsDataURL(file);
 }
 
 // ── Import JSON ──

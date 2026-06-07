@@ -7,145 +7,398 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-/* ── LOGIN GATE ── */
+/* ══════════════════════════════════════
+   LOGIN GATE
+══════════════════════════════════════ */
 #loginGate {
   position:fixed; inset:0; z-index:9999;
   display:none; align-items:center; justify-content:center;
-  background:var(--bg);
-  animation: loginFadeIn .5s ease;
+  background: transparent;
+  animation: loginFadeIn .6s ease;
 }
-@keyframes loginFadeIn  { from { opacity:0 } to { opacity:1 } }
-@keyframes loginFadeOut { from { opacity:1 } to { opacity:0 } }
+@keyframes loginFadeIn  { from{opacity:0} to{opacity:1} }
+@keyframes loginFadeOut { from{opacity:1} to{opacity:0} }
 
+/* Canvas nền riêng cho login (hiện trên cùng) */
+#loginBgCanvas {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+}
+
+/* Con trỏ & ring — nâng z-index lên trên loginGate */
+.cur-dot  { z-index:10001 !important; }
+.cur-ring { z-index:10000 !important; }
+
+/* Lớp glow nền */
 .login-bg-blur {
-  position:absolute; inset:0; pointer-events:none;
-  background: radial-gradient(ellipse 60% 50% at 20% 30%, rgba(124,58,237,.18) 0%, transparent 70%),
-              radial-gradient(ellipse 50% 40% at 80% 70%, rgba(168,85,247,.13) 0%, transparent 70%),
-              radial-gradient(ellipse 40% 35% at 60% 20%, rgba(99,102,241,.1) 0%, transparent 70%);
+  position:absolute; inset:0; pointer-events:none; z-index:1;
+  background:
+    radial-gradient(ellipse 55% 45% at 15% 25%, rgba(124,58,237,.22) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 75%, rgba(6,182,212,.15)  0%, transparent 65%),
+    radial-gradient(ellipse 40% 35% at 55% 15%, rgba(99,102,241,.12) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,0,0,.88)      0%, transparent 100%);
 }
 
+/* ── Orbit rings ── */
+.login-orbit {
+  position:absolute; border-radius:50%; pointer-events:none; z-index:2;
+  border:1px solid rgba(168,85,247,.13);
+}
+.login-orbit-1 {
+  width:520px; height:520px;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation: orbitSpin1 18s linear infinite;
+  border-color: rgba(168,85,247,.1);
+}
+.login-orbit-2 {
+  width:360px; height:360px;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation: orbitSpin2 12s linear infinite reverse;
+  border-color: rgba(6,182,212,.1);
+}
+.login-orbit-3 {
+  width:200px; height:200px;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation: orbitSpin1 7s linear infinite;
+  border-color: rgba(192,132,252,.14);
+}
+/* Chấm chạy trên orbit */
+.login-orbit::before {
+  content:''; position:absolute;
+  width:6px; height:6px; border-radius:50%;
+  top:-3px; left:50%; margin-left:-3px;
+  background: radial-gradient(circle, #c084fc, #7c3aed);
+  box-shadow: 0 0 10px #a855f7, 0 0 20px rgba(168,85,247,.5);
+}
+.login-orbit-2::before {
+  width:5px; height:5px; top:-2.5px; margin-left:-2.5px;
+  background: radial-gradient(circle, #67e8f9, #0891b2);
+  box-shadow: 0 0 10px #06b6d4, 0 0 20px rgba(6,182,212,.5);
+}
+.login-orbit-3::before {
+  width:4px; height:4px; top:-2px; margin-left:-2px;
+  background: radial-gradient(circle, #f0abfc, #a855f7);
+  box-shadow: 0 0 8px #c084fc;
+}
+@keyframes orbitSpin1 { to { transform:translate(-50%,-50%) rotate(360deg) } }
+@keyframes orbitSpin2 { to { transform:translate(-50%,-50%) rotate(360deg) } }
+
+/* ── Login box ── */
 #loginBox {
-  position:relative; z-index:1;
-  background: linear-gradient(145deg, rgba(15,15,36,.97), rgba(22,22,58,.95));
-  border: 1px solid rgba(168,85,247,.28);
-  border-radius: 24px;
-  padding: 40px 36px 36px;
-  width: 380px; max-width: 94vw;
-  box-shadow: 0 32px 80px rgba(0,0,0,.6), 0 0 60px rgba(124,58,237,.12);
-  transition: border-color .3s, box-shadow .3s;
+  position:relative; z-index:3;
+  background: linear-gradient(145deg, rgba(12,10,32,.96), rgba(20,16,50,.96));
+  border: 1px solid rgba(168,85,247,.3);
+  border-radius: 26px;
+  padding: 42px 38px 36px;
+  width: 390px; max-width: 94vw;
+  box-shadow:
+    0 0 0 1px rgba(168,85,247,.06),
+    0 32px 80px rgba(0,0,0,.7),
+    0 0 60px rgba(124,58,237,.18),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  transition: border-color .4s, box-shadow .4s;
+  animation: loginBoxIn .65s cubic-bezier(.34,1.4,.64,1) both;
+  overflow: hidden;
+}
+@keyframes loginBoxIn {
+  from { opacity:0; transform:scale(.88) translateY(30px) }
+  to   { opacity:1; transform:scale(1)   translateY(0) }
 }
 
+/* Shimmer sweep trên box */
+#loginBox::before {
+  content:''; position:absolute;
+  top:0; left:-100%; width:60%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(168,85,247,.07), transparent);
+  animation: loginShimmer 4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes loginShimmer { 0%{left:-100%} 60%,100%{left:140%} }
+
+/* Pulse border glow */
+#loginBox::after {
+  content:''; position:absolute; inset:-1px; border-radius:27px; z-index:-1;
+  background: conic-gradient(from var(--angle,0deg), transparent 70%, rgba(168,85,247,.55) 85%, transparent 95%);
+  animation: loginBorderSpin 4s linear infinite;
+}
+@property --angle { syntax:'<angle>'; initial-value:0deg; inherits:false; }
+@keyframes loginBorderSpin { to { --angle: 360deg } }
+
+/* ── Logo ── */
 .login-logo {
-  display:flex; flex-direction:column; align-items:center; gap:10px;
-  margin-bottom:28px;
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  margin-bottom:30px;
 }
 .login-logo-icon {
-  width:56px; height:56px;
+  position:relative;
+  width:64px; height:64px;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius:16px;
+  border-radius:18px;
   display:flex; align-items:center; justify-content:center;
-  font-size:26px;
-  box-shadow: 0 0 30px rgba(124,58,237,.45);
-  animation: float 3s ease-in-out infinite;
+  font-size:28px;
+  box-shadow: 0 0 30px rgba(124,58,237,.5), 0 0 60px rgba(124,58,237,.2);
+  animation: loginIconFloat 3.5s ease-in-out infinite;
 }
+.login-logo-icon::after {
+  content:''; position:absolute; inset:-6px; border-radius:24px;
+  border:1px solid rgba(168,85,247,.35);
+  animation: loginIconRing 3.5s ease-in-out infinite;
+}
+@keyframes loginIconFloat { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-8px) rotate(3deg)} }
+@keyframes loginIconRing  { 0%,100%{opacity:.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+
 .login-title {
-  font-family:'Orbitron',sans-serif; font-size:17px; font-weight:700;
-  background: linear-gradient(135deg, var(--accent2), var(--neon));
+  font-family:'Orbitron',sans-serif; font-size:18px; font-weight:700;
+  background: linear-gradient(135deg, #fff 0%, var(--accent2) 50%, var(--neon) 100%);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  letter-spacing:.08em; text-align:center;
+  letter-spacing:.1em; text-align:center;
+  text-shadow: none;
 }
+/* Typing cursor effect trên title */
+.login-title-cursor {
+  display:inline-block; width:2px; height:1em;
+  background: var(--accent2); margin-left:2px;
+  animation: blink .8s step-end infinite;
+  vertical-align:text-bottom; border-radius:1px;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
 .login-sub {
   font-size:12px; color:var(--muted); text-align:center;
+  letter-spacing:.03em;
 }
 
-.login-field {
-  margin-bottom:14px;
-}
+/* ── Field ── */
+.login-field { margin-bottom:16px; }
 .login-field label {
   display:block; font-size:11px; font-weight:600;
-  color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
-  margin-bottom:6px;
+  color:var(--muted); text-transform:uppercase; letter-spacing:.1em;
+  margin-bottom:7px;
 }
 .login-pw-wrap {
   position:relative; display:flex; align-items:center;
 }
 .login-pw-wrap .fi {
-  padding-right:42px; width:100%;
-  background:rgba(4,4,14,.7);
-  border-color: rgba(120,60,255,.22);
-  font-size:14px; letter-spacing:.04em;
+  padding-right:44px; width:100%;
+  background: rgba(4,4,18,.75);
+  border-color: rgba(120,60,255,.2);
+  font-size:14px; letter-spacing:.06em;
+  transition: border-color .25s, box-shadow .25s, background .25s;
 }
 .login-pw-wrap .fi:focus {
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(124,58,237,.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,58,237,.14), 0 0 20px rgba(124,58,237,.1);
+  background: rgba(8,6,24,.9);
 }
 .login-pw-wrap .fi.err {
   border-color:var(--red) !important;
   box-shadow:0 0 0 3px rgba(239,68,68,.1) !important;
 }
 .eye-btn {
-  position:absolute; right:11px;
+  position:absolute; right:12px;
   background:none; border:none; cursor:pointer;
-  font-size:16px; line-height:1; padding:0;
-  opacity:.6; transition:opacity .2s;
+  font-size:16px; line-height:1; padding:2px;
+  opacity:.5; transition:opacity .2s;
 }
 .eye-btn:hover { opacity:1; }
 
+/* ── Error ── */
 .login-err {
-  display:flex; align-items:center; gap:7px;
+  display:flex; align-items:center; gap:8px;
   background: rgba(239,68,68,.08);
-  border: 1px solid rgba(239,68,68,.25);
-  border-radius:9px; padding:9px 13px;
+  border: 1px solid rgba(239,68,68,.22);
+  border-radius:10px; padding:10px 14px;
   font-size:12px; color:#fca5a5;
   margin-bottom:14px;
-  opacity:0; transform:translateY(-4px);
-  transition: opacity .25s, transform .25s;
+  opacity:0; transform:translateY(-5px);
+  transition: opacity .3s, transform .3s;
   pointer-events:none;
 }
 .login-err.show { opacity:1; transform:translateY(0); pointer-events:all; }
 
+/* ── Button ── */
 #loginBtn {
-  width:100%; padding:12px;
+  width:100%; padding:13px;
   font-size:14px; font-weight:600;
-  border-radius:12px; border:none; cursor:pointer;
-  font-family:'Sora',sans-serif; letter-spacing:.03em;
+  border-radius:13px; border:none; cursor:pointer;
+  font-family:'Sora',sans-serif; letter-spacing:.04em;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   color:#fff;
-  box-shadow: 0 4px 20px rgba(124,58,237,.4);
-  transition: all .2s;
-  display:flex; align-items:center; justify-content:center; gap:8px;
+  box-shadow: 0 4px 20px rgba(124,58,237,.4), 0 0 30px rgba(124,58,237,.1);
+  transition: all .25s;
+  display:flex; align-items:center; justify-content:center; gap:9px;
+  position:relative; overflow:hidden;
 }
+#loginBtn::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+  opacity:0; transition:opacity .25s;
+}
+#loginBtn:hover:not(:disabled)::before { opacity:1; }
 #loginBtn:hover:not(:disabled) {
-  transform:translateY(-1px);
-  box-shadow:0 6px 28px rgba(124,58,237,.55);
+  transform:translateY(-2px);
+  box-shadow: 0 8px 32px rgba(124,58,237,.6), 0 0 50px rgba(168,85,247,.2);
 }
-#loginBtn:disabled { cursor:not-allowed; opacity:.85; }
+#loginBtn:active:not(:disabled) { transform:translateY(0); }
+#loginBtn:disabled { cursor:not-allowed; opacity:.8; }
 
+/* ── Spinner ── */
 .login-spinner {
   width:16px; height:16px;
-  border:2px solid rgba(255,255,255,.3);
+  border:2px solid rgba(255,255,255,.25);
   border-top-color:#fff;
   border-radius:50%;
-  animation:spin .6s linear infinite;
+  animation:spin .55s linear infinite;
   flex-shrink:0;
 }
-@keyframes spin { to { transform:rotate(360deg) } }
+@keyframes spin { to{transform:rotate(360deg)} }
 
+/* ── Footer ── */
 .login-footer {
-  margin-top:18px; text-align:center;
-  font-size:11px; color:var(--muted); opacity:.6;
+  margin-top:20px; text-align:center;
+  font-size:11px; color:var(--muted); opacity:.55;
+  letter-spacing:.03em;
+}
+/* Dấu chấm nhấp nháy */
+.login-dot { display:inline-block; animation:dotPulse 1.4s ease-in-out infinite; }
+.login-dot:nth-child(2){ animation-delay:.2s }
+.login-dot:nth-child(3){ animation-delay:.4s }
+@keyframes dotPulse { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
+
+/* ── Shake ── */
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  18%{transform:translateX(-8px)}
+  36%{transform:translateX(8px)}
+  54%{transform:translateX(-5px)}
+  72%{transform:translateX(5px)}
+  88%{transform:translateX(-3px)}
+}
+#loginBox.shake { animation:shake .44s ease; }
+
+/* ══════════════════════════════════════
+   AUTH SYSTEM — panels, buttons, links
+══════════════════════════════════════ */
+
+/* Panel transition */
+@keyframes authPanelIn {
+  from { opacity:0; transform:translateY(10px) scale(.97) }
+  to   { opacity:1; transform:translateY(0)    scale(1)   }
 }
 
-/* shake animation */
-@keyframes shake {
-  0%,100% { transform:translateX(0) }
-  18%      { transform:translateX(-7px) }
-  36%      { transform:translateX(7px) }
-  54%      { transform:translateX(-5px) }
-  72%      { transform:translateX(5px) }
-  88%      { transform:translateX(-3px) }
+/* loginBox mở rộng khi register (có 2 cột) */
+#loginBox {
+  transition: width .35s cubic-bezier(.34,1.2,.64,1),
+              padding .35s, border-color .4s, box-shadow .4s;
 }
-#loginBox.shake { animation:shake .42s ease; }
+#authPanelRegister { min-width: 0; }
+
+/* 2-cột trong form đăng ký */
+.auth-row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+@media (max-width: 500px) {
+  .auth-row2 { grid-template-columns: 1fr; }
+  #loginBox  { width: 94vw !important; padding: 28px 18px 22px !important; }
+}
+
+/* Khi panel register active thì box rộng hơn */
+#authPanelRegister:not([style*="none"]) ~ * { display: none }
+
+/* Nút chính — thay #loginBtn cũ */
+.auth-btn {
+  width: 100%;
+  padding: 13px;
+  font-size: 14px; font-weight: 600;
+  border-radius: 13px; border: none; cursor: pointer;
+  font-family: 'Sora', sans-serif; letter-spacing: .04em;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124,58,237,.4), 0 0 30px rgba(124,58,237,.1);
+  transition: all .25s;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  position: relative; overflow: hidden;
+  margin-bottom: 12px;
+}
+.auth-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+  opacity: 0; transition: opacity .25s;
+}
+.auth-btn:hover:not(:disabled)::before { opacity: 1; }
+.auth-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(124,58,237,.6), 0 0 50px rgba(168,85,247,.2);
+}
+.auth-btn:active:not(:disabled) { transform: translateY(0); }
+.auth-btn:disabled { cursor: not-allowed; opacity: .8; }
+
+/* Links dưới form */
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+.auth-links span {
+  font-size: 12px;
+  color: var(--accent3);
+  cursor: pointer;
+  opacity: .8;
+  transition: opacity .18s;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(168,85,247,.3);
+}
+.auth-links span:hover { opacity: 1; }
+
+/* Nút link nhỏ (gửi lại OTP) */
+.auth-link-btn {
+  background: none; border: none;
+  color: var(--accent3); font-family: 'Sora', sans-serif;
+  font-size: 12px; cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  opacity: .8; transition: opacity .18s;
+  margin-left: auto;
+}
+.auth-link-btn:hover { opacity: 1; }
+.auth-link-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* OTP info box */
+.otp-info-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(124,58,237,.1);
+  border: 1px solid rgba(168,85,247,.25);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.otp-info-icon { font-size: 26px; flex-shrink: 0; }
+
+/* OTP input to và căn giữa */
+.otp-input {
+  font-family: 'Orbitron', monospace !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  letter-spacing: .35em !important;
+  text-align: center;
+  color: var(--accent3) !important;
+}
+
+/* Timer row */
+.otp-timer-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
 
 /* ── NOTES GRID ── */
 .notes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px }
@@ -178,31 +431,141 @@
 
 <!-- ── LOGIN GATE ── -->
 <div id="loginGate">
+  <canvas id="loginBgCanvas"></canvas>
   <div class="login-bg-blur"></div>
+  <div class="login-orbit login-orbit-1"></div>
+  <div class="login-orbit login-orbit-2"></div>
+  <div class="login-orbit login-orbit-3"></div>
+
   <div id="loginBox">
+    <!-- Logo chung -->
     <div class="login-logo">
       <div class="login-logo-icon">🎮</div>
-      <div class="login-title">ROBLOX MANAGER</div>
-      <div class="login-sub">Nhập mật khẩu để tiếp tục</div>
+      <div class="login-title" id="loginTitle"></div>
+      <div class="login-sub" id="authSub">Đăng nhập để tiếp tục</div>
     </div>
 
-    <div class="login-field">
-      <label>Mật khẩu</label>
-      <div class="login-pw-wrap">
-        <input class="fi" id="loginInput" type="password" placeholder="••••••••••••">
-        <button class="eye-btn" type="button" onclick="togglePw()" title="Hiện/ẩn mật khẩu">
-          <span id="eyeIcon">👁️</span>
-        </button>
+    <!-- ══ PANEL: ĐĂNG NHẬP ══ -->
+    <div id="authPanelLogin">
+      <div class="login-field">
+        <label>Tên đăng nhập hoặc Email</label>
+        <div class="login-pw-wrap">
+          <input class="fi" id="loginIdent" type="text" placeholder="username hoặc email@gmail.com" autocomplete="username">
+        </div>
+      </div>
+      <div class="login-field">
+        <label>Mật khẩu</label>
+        <div class="login-pw-wrap">
+          <input class="fi" id="loginPw" type="password" placeholder="••••••••••••" autocomplete="current-password">
+          <button class="eye-btn" type="button" onclick="toggleAuthPw('loginPw','eyeLogin')"><span id="eyeLogin">👁️</span></button>
+        </div>
+      </div>
+      <div class="login-err" id="loginErr"></div>
+      <button class="auth-btn" id="loginBtn" onclick="doLogin()">🔓 Đăng Nhập</button>
+      <div class="auth-links">
+        <span onclick="switchPanel('forgot')">Quên mật khẩu?</span>
+        <span onclick="switchPanel('register')">Tạo tài khoản mới →</span>
       </div>
     </div>
 
-    <div class="login-err" id="loginErr">
-      🔒 Mật khẩu không đúng, vui lòng thử lại.
+    <!-- ══ PANEL: ĐĂNG KÝ ══ -->
+    <div id="authPanelRegister" style="display:none">
+      <div class="auth-row2">
+        <div class="login-field">
+          <label>Email *</label>
+          <input class="fi" id="regEmail" type="email" placeholder="email@gmail.com" autocomplete="email">
+        </div>
+        <div class="login-field">
+          <label>Tên đăng nhập *</label>
+          <input class="fi" id="regUsername" type="text" placeholder="username" autocomplete="username">
+        </div>
+      </div>
+      <div class="auth-row2">
+        <div class="login-field">
+          <label>Mật khẩu *</label>
+          <div class="login-pw-wrap">
+            <input class="fi" id="regPw" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
+            <button class="eye-btn" type="button" onclick="toggleAuthPw('regPw','eyeReg1')"><span id="eyeReg1">👁️</span></button>
+          </div>
+        </div>
+        <div class="login-field">
+          <label>Nhập lại mật khẩu *</label>
+          <div class="login-pw-wrap">
+            <input class="fi" id="regPw2" type="password" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
+            <button class="eye-btn" type="button" onclick="toggleAuthPw('regPw2','eyeReg2')"><span id="eyeReg2">👁️</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="login-err" id="regErr"></div>
+      <button class="auth-btn" id="regBtn" onclick="doRegister()">📧 Gửi Mã Xác Nhận</button>
+      <div class="auth-links">
+        <span onclick="switchPanel('login')">← Đã có tài khoản? Đăng nhập</span>
+      </div>
     </div>
 
-    <button id="loginBtn" onclick="doLogin()">🔓 Vào Dashboard</button>
+    <!-- ══ PANEL: OTP ══ -->
+    <div id="authPanelOtp" style="display:none">
+      <div class="otp-info-box">
+        <div class="otp-info-icon">📨</div>
+        <div>
+          Mã OTP đã được gửi đến<br>
+          <strong id="otpEmailHint" style="color:var(--accent3)"></strong>
+        </div>
+      </div>
+      <div class="login-field" style="margin-top:14px">
+        <label>Mã OTP (6 chữ số)</label>
+        <input class="fi otp-input" id="otpInput" type="text" inputmode="numeric" maxlength="6" placeholder="_ _ _ _ _ _" autocomplete="one-time-code">
+      </div>
+      <div class="otp-timer-row">
+        <span style="color:var(--muted);font-size:12px">Còn lại:</span>
+        <span id="otpCountdown" style="color:var(--accent3);font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700">5:00</span>
+        <button id="resendOtpBtn" class="auth-link-btn" onclick="resendOtp()">Gửi lại mã</button>
+      </div>
+      <div class="login-err" id="otpErr"></div>
+      <button class="auth-btn" id="otpBtn" onclick="verifyOtp()">✅ Xác Nhận OTP</button>
+      <div class="auth-links">
+        <span onclick="switchPanel('login')">← Quay lại đăng nhập</span>
+      </div>
+    </div>
 
-    <div class="login-footer">Phiên đăng nhập giữ trong 8 giờ</div>
+    <!-- ══ PANEL: QUÊN MẬT KHẨU ══ -->
+    <div id="authPanelForgot" style="display:none">
+      <div class="login-field">
+        <label>Email đã đăng ký</label>
+        <input class="fi" id="forgotEmail" type="email" placeholder="email@gmail.com" autocomplete="email">
+      </div>
+      <div class="login-err" id="forgotErr"></div>
+      <button class="auth-btn" id="forgotBtn" onclick="doForgot()">📧 Gửi Mã Khôi Phục</button>
+      <div class="auth-links">
+        <span onclick="switchPanel('login')">← Quay lại đăng nhập</span>
+      </div>
+    </div>
+
+    <!-- ══ PANEL: ĐẶT LẠI MẬT KHẨU ══ -->
+    <div id="authPanelResetPw" style="display:none">
+      <div class="login-field">
+        <label>Mật khẩu mới</label>
+        <div class="login-pw-wrap">
+          <input class="fi" id="resetPwInput" type="password" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
+          <button class="eye-btn" type="button" onclick="toggleAuthPw('resetPwInput','eyeReset1')"><span id="eyeReset1">👁️</span></button>
+        </div>
+      </div>
+      <div class="login-field">
+        <label>Nhập lại mật khẩu mới</label>
+        <div class="login-pw-wrap">
+          <input class="fi" id="resetPwInput2" type="password" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
+          <button class="eye-btn" type="button" onclick="toggleAuthPw('resetPwInput2','eyeReset2')"><span id="eyeReset2">👁️</span></button>
+        </div>
+      </div>
+      <div class="login-err" id="resetPwErr"></div>
+      <button class="auth-btn" id="resetPwBtn" onclick="doResetPw()">🔑 Đặt Lại Mật Khẩu</button>
+    </div>
+
+    <!-- Footer chung -->
+    <div class="login-footer">
+      Phiên đăng nhập giữ trong 8 giờ
+      <span class="login-dot">·</span><span class="login-dot">·</span><span class="login-dot">·</span>
+    </div>
   </div>
 </div>
 
@@ -350,6 +713,11 @@
             <div class="settings-item-info"><div class="settings-item-label" style="color:var(--red)">Reset Kỷ Lục Rắn</div><div class="settings-item-sub">Xóa điểm cao nhất game rắn</div></div>
             <button class="btn btn-danger btn-sm" onclick="resetSnakeBest()">🔄 Reset</button>
           </div>
+          <div class="settings-divider"></div>
+          <div class="settings-item">
+            <div class="settings-item-info"><div class="settings-item-label" style="color:var(--red)">Đăng Xuất</div><div class="settings-item-sub">Kết thúc phiên đăng nhập hiện tại</div></div>
+            <button class="btn btn-danger btn-sm" onclick="doLogout()">🚪 Đăng Xuất</button>
+          </div>
         </div>
         <div class="settings-section settings-about">
           <div class="settings-section-title">ℹ️ Thông Tin</div>
@@ -465,6 +833,23 @@
             <div class="ghc-best">Kỷ lục: <span id="hubTetrisBest" style="color:var(--yellow);font-family:'Orbitron',sans-serif">0</span></div>
           </div>
           <button class="btn btn-primary ghc-btn" style="background:linear-gradient(135deg,#0891b2,#06b6d4);box-shadow:0 4px 18px rgba(6,182,212,.35)">▶ Chơi</button>
+        </div>
+        <!-- Chess -->
+        <div class="game-hub-card" onclick="launchGame('chess')">
+          <div class="ghc-glow" style="--gc:161,98,7"></div>
+          <div class="ghc-icon">♟️</div>
+          <div class="ghc-info">
+            <div class="ghc-title">Cờ Vua</div>
+            <div class="ghc-desc">Thách đấu AI 3 cấp độ, chơi cùng bạn bè offline, hoặc đấu online realtime qua Firebase. Bàn cờ đẹp, hỗ trợ mobile!</div>
+            <div class="ghc-tags">
+              <span class="ghc-tag">🤖 vs AI</span>
+              <span class="ghc-tag">🤝 2 người offline</span>
+              <span class="ghc-tag">🌐 Online</span>
+              <span class="ghc-tag">♟ Phong cấp</span>
+            </div>
+            <div class="ghc-best">Mở trang chơi riêng ✨</div>
+          </div>
+          <button class="btn ghc-btn" style="background:linear-gradient(135deg,#a16207,#eab308);box-shadow:0 4px 18px rgba(234,179,8,.35);color:#fff;width:100%;justify-content:center">♟️ Chơi Chess</button>
         </div>
       </div>
     </div>
@@ -773,6 +1158,181 @@
 <script src="games.js"></script>
 <script src="settings.js"></script>
 <script src="notes.js"></script>
+<script>
+// Auto-resize loginBox theo panel đang hiện
+(function() {
+  const _origSwitch = window.switchPanel;
+  // patch sau khi login.js load
+  document.addEventListener('DOMContentLoaded', () => {
+    const box = document.getElementById('loginBox');
+    if (!box) return;
+    const orig = window.switchPanel;
+    window.switchPanel = function(name) {
+      orig(name);
+      if (name === 'register') {
+        box.style.width = '520px';
+      } else {
+        box.style.width = '390px';
+      }
+    };
+  });
+})();
+</script>
 <script src="login.js"></script>
+<script>
+// ══════════════════════════════
+//  LOGIN EFFECTS
+// ══════════════════════════════
+(function() {
+  // ── Typing title effect ──
+  const titleEl = document.getElementById('loginTitle');
+  const fullText = 'AUGUST\'S WEB';
+  let ti = 0;
+  function typeTitle() {
+    if (!titleEl) return;
+    if (ti <= fullText.length) {
+      titleEl.innerHTML = fullText.slice(0, ti) + '<span class="login-title-cursor"></span>';
+      ti++;
+      setTimeout(typeTitle, ti === 1 ? 600 : 80 + Math.random()*40);
+    }
+  }
+  setTimeout(typeTitle, 500);
+
+  // ── Particle canvas cho login ──
+  const cv  = document.getElementById('loginBgCanvas');
+  if (!cv) return;
+  let W, H;
+  const COLORS = ['#c084fc','#818cf8','#67e8f9','#f0abfc','#ffffff','#a5f3fc'];
+
+  // Particles
+  const particles = [];
+  function mkParticle() {
+    return {
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      r:  Math.random() * 1.8 + 0.3,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      a:  Math.random() * 0.7 + 0.15,
+      phase: Math.random() * Math.PI * 2,
+      sp:    Math.random() * 0.015 + 0.005,
+      col:   COLORS[Math.floor(Math.random() * COLORS.length)],
+    };
+  }
+  // Shooting stars
+  const shoots = [];
+  function mkShoot() {
+    const ang = (10 + Math.random()*20) * Math.PI / 180;
+    shoots.push({
+      x:  Math.random() * W * 0.8,
+      y:  Math.random() * H * 0.35,
+      vx: Math.cos(ang) * (6 + Math.random()*8),
+      vy: Math.sin(ang) * (6 + Math.random()*8),
+      len: 60 + Math.random()*90,
+      alpha: 1,
+    });
+  }
+  setInterval(() => { if (document.getElementById('loginGate').style.display !== 'none') mkShoot(); }, 2200);
+
+  // Nebula blobs
+  const blobs = [];
+  function mkBlobs() {
+    blobs.length = 0;
+    const defs = [
+      { xp:.15, yp:.2,  rx:240, ry:140, c:'90,30,200',  a:.07 },
+      { xp:.82, yp:.72, rx:280, ry:160, c:'30,70,210',  a:.06 },
+      { xp:.5,  yp:.9,  rx:200, ry:120, c:'160,20,170', a:.055},
+      { xp:.88, yp:.12, rx:180, ry:110, c:'10,130,190', a:.05 },
+      { xp:.3,  yp:.5,  rx:200, ry:120, c:'80,0,160',   a:.045},
+    ];
+    defs.forEach(d => blobs.push({ x:W*d.xp, y:H*d.yp, ...d }));
+  }
+
+  function resize() {
+    W = cv.width  = window.innerWidth;
+    H = cv.height = window.innerHeight;
+    particles.length = 0;
+    for (let i = 0; i < 180; i++) particles.push(mkParticle());
+    mkBlobs();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let t = 0;
+  function draw() {
+    if (document.getElementById('loginGate').style.display === 'none') return;
+    t++;
+    const ctx = cv.getContext('2d');
+    ctx.clearRect(0, 0, W, H);
+
+    // deep space bg
+    const grd = ctx.createRadialGradient(W*.5,H*.5,0, W*.5,H*.5,Math.max(W,H)*.85);
+    grd.addColorStop(0,  '#0d0620');
+    grd.addColorStop(.5, '#060510');
+    grd.addColorStop(1,  '#010108');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+
+    // nebula blobs
+    blobs.forEach(n => {
+      ctx.save();
+      const g = ctx.createRadialGradient(n.x, n.y*n.rx/n.ry, 0, n.x, n.y*n.rx/n.ry, n.rx);
+      g.addColorStop(0,   `rgba(${n.c},${n.a})`);
+      g.addColorStop(.55, `rgba(${n.c},${n.a*.35})`);
+      g.addColorStop(1,   `rgba(${n.c},0)`);
+      ctx.scale(1, n.ry/n.rx);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(n.x, n.y*n.rx/n.ry, n.rx, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    // particles
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+      if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+      const al = p.a * (.5 + .5 * Math.sin(t * p.sp * 60 + p.phase));
+      ctx.globalAlpha = al;
+      ctx.shadowBlur  = 6; ctx.shadowColor = p.col;
+      ctx.fillStyle   = p.col;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur  = 0; ctx.globalAlpha = 1;
+    });
+
+    // shooting stars
+    for (let i = shoots.length-1; i >= 0; i--) {
+      const s = shoots[i];
+      s.x += s.vx; s.y += s.vy; s.alpha -= 0.018;
+      if (s.alpha <= 0) { shoots.splice(i,1); continue; }
+      const mag = Math.hypot(s.vx, s.vy);
+      const tx = s.x - (s.vx/mag)*s.len, ty = s.y - (s.vy/mag)*s.len;
+      const tg = ctx.createLinearGradient(tx,ty,s.x,s.y);
+      tg.addColorStop(0, 'rgba(255,255,255,0)');
+      tg.addColorStop(1, `rgba(255,255,255,${s.alpha})`);
+      ctx.strokeStyle = tg; ctx.lineWidth = 1.4;
+      ctx.shadowBlur  = 8; ctx.shadowColor = '#d8b4fe';
+      ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(s.x,s.y); ctx.stroke();
+      ctx.shadowBlur  = 0;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  // Khởi chạy khi login hiện
+  const observer = new MutationObserver(() => {
+    if (document.getElementById('loginGate').style.display !== 'none') {
+      resize(); draw();
+    }
+  });
+  observer.observe(document.getElementById('loginGate'), { attributes:true, attributeFilter:['style'] });
+
+  // Chạy ngay nếu đang hiển thị
+  if (document.getElementById('loginGate').style.display !== 'none') draw();
+  // Còn nếu display được set sau (login.js chạy sau)
+  setTimeout(() => {
+    if (document.getElementById('loginGate').style.display !== 'none') draw();
+  }, 100);
+})();
+</script>
 </body>
 </html>

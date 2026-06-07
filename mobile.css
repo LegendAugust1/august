@@ -1,0 +1,306 @@
+/* ═══════════════════════════════════════════════════
+   MOBILE RESPONSIVE  — thêm vào cuối style.css
+   Hoặc <link rel="stylesheet" href="mobile.css">
+   sau dòng <link rel="stylesheet" href="style.css">
+════════════════════════════════════════════════════ */
+
+/* ── Nút D-pad cảm ứng cho game (mặc định ẩn) ── */
+.touch-dpad {
+  display: none;
+  position: relative;
+  width: 130px;
+  height: 130px;
+  flex-shrink: 0;
+}
+.touch-dpad button {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(124,58,237,.2);
+  border: 1px solid rgba(168,85,247,.35);
+  color: var(--accent3);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .12s, transform .08s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+}
+.touch-dpad button:active {
+  background: rgba(124,58,237,.45);
+  transform: scale(.92);
+}
+.touch-dpad .dpad-up    { top: 0;   left: 44px; }
+.touch-dpad .dpad-down  { bottom:0; left: 44px; }
+.touch-dpad .dpad-left  { top: 44px; left: 0; }
+.touch-dpad .dpad-right { top: 44px; right: 0; }
+.touch-dpad .dpad-center {
+  top: 44px; left: 44px;
+  background: rgba(168,85,247,.1);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* Nút hành động game (rotate/drop Tetris) */
+.touch-actions {
+  display: none;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.touch-actions button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: rgba(124,58,237,.2);
+  border: 1px solid rgba(168,85,247,.35);
+  color: var(--accent3);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Sora', sans-serif;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background .12s;
+}
+.touch-actions button:active { background: rgba(124,58,237,.45); }
+
+/* Nút cắm cờ Minesweeper mobile */
+.mine-flag-toggle {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.mine-flag-toggle .flag-indicator {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  transition: all .2s;
+}
+.mine-flag-toggle.flag-mode .flag-indicator {
+  background: rgba(239,68,68,.2);
+  border-color: rgba(239,68,68,.5);
+}
+.mine-flag-toggle .flag-label { font-size: 13px; color: var(--muted); }
+.mine-flag-toggle.flag-mode .flag-label { color: var(--red); font-weight: 600; }
+
+/* Bottom navigation bar (chỉ hiện trên mobile) */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 60px;
+  background: rgba(10,8,28,.97);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.mobile-nav-inner {
+  display: flex;
+  height: 100%;
+  align-items: stretch;
+}
+.mobile-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 600;
+  transition: color .2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  border: none;
+  background: none;
+  font-family: 'Sora', sans-serif;
+  position: relative;
+}
+.mobile-nav-item .mn-ico  { font-size: 20px; line-height: 1; }
+.mobile-nav-item.active   { color: var(--accent3); }
+.mobile-nav-item .mn-dot  {
+  position: absolute;
+  top: 8px; right: calc(50% - 16px);
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: none;
+}
+.mobile-nav-item.has-badge .mn-dot { display: block; }
+
+/* ═══════════════════════════════════════
+   BREAKPOINT: tablet — ≤ 900px
+════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .sidebar { width: 180px; }
+  .main    { margin-left: 180px; padding: 22px 16px 40px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .settings-grid { grid-template-columns: 1fr; }
+  .games-hub-grid { grid-template-columns: 1fr; }
+  .memory-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; max-width: 100%; }
+}
+
+/* ═══════════════════════════════════════
+   BREAKPOINT: mobile — ≤ 640px
+════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* ── Tắt custom cursor ── */
+  body { cursor: default !important; }
+  .cur-dot, .cur-ring { display: none !important; }
+
+  /* ── Ẩn sidebar, hiện bottom nav ── */
+  .sidebar     { display: none !important; }
+  .mobile-nav  { display: block; }
+  .main {
+    margin-left: 0;
+    padding: 14px 12px 76px;
+    min-height: 100vh;
+  }
+
+  /* ── Topbar ── */
+  .topbar { flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 16px; }
+  .page-title { font-size: 15px; }
+  .topbar-actions { display: flex; flex-wrap: wrap; gap: 7px; width: 100%; }
+  .topbar-actions .btn { font-size: 11px; padding: 7px 11px; }
+  .snake-score-display { font-size: 11px; padding: 5px 10px; }
+
+  /* ── Stats ── */
+  .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+  .stat-val { font-size: 18px; }
+  .stat-card { padding: 14px; }
+
+  /* ── Toolbar search ── */
+  .toolbar { gap: 7px; }
+  .toolbar .btn { font-size: 12px; padding: 8px 12px; }
+
+  /* ── Account cards grid ── */
+  .grid { grid-template-columns: 1fr; gap: 12px; }
+  .acc-card { padding: 15px; }
+  .totp-code { font-size: 17px; letter-spacing: .15em; }
+
+  /* ── Modals ── */
+  .modal { padding: 20px 16px; border-radius: 16px; max-height: 92vh; overflow-y: auto; }
+  .modal-title { font-size: 13px; }
+  .fr { grid-template-columns: 1fr; gap: 0; }
+
+  /* ── Settings ── */
+  .settings-grid { grid-template-columns: 1fr; gap: 12px; }
+  .settings-input, .settings-select { width: 130px; }
+  .settings-about { grid-column: 1; }
+
+  /* ── Games hub ── */
+  .games-hub-grid { grid-template-columns: 1fr; gap: 12px; }
+  .game-guide-bar { display: none; } /* ẩn hướng dẫn phím trên mobile */
+
+  /* ══ SNAKE mobile ══ */
+  .snake-wrap { flex-direction: column; align-items: center; gap: 12px; }
+  .snake-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .snake-side .snake-info-card {
+    flex: 1;
+    min-width: calc(50% - 4px);
+    padding: 10px 12px;
+  }
+  .snake-side .snake-controls { display: none; } /* ẩn hướng dẫn phím */
+  .snake-side > .btn { width: 100%; }
+  .snake-info-val { font-size: 18px; }
+  #snakeCanvas   { width: 320px !important; height: 320px !important; }
+  .touch-dpad    { display: block; }           /* hiện D-pad cảm ứng */
+  .touch-actions { display: flex; }
+
+  /* ══ MINESWEEPER mobile ══ */
+  .mine-layout { flex-direction: column; gap: 12px; }
+  .mine-right  {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+  }
+  .mine-right .snake-info-card {
+    flex: 1;
+    min-width: calc(50% - 4px);
+    padding: 10px 12px;
+  }
+  .mine-right > .btn { width: 100%; }
+  #mineBoardWrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+  .mine-cell { width: 28px; height: 28px; font-size: 12px; border-radius: 5px; }
+  .mine-flag-toggle { display: flex; } /* hiện nút chuyển chế độ cờ */
+  .mine-diff-row { gap: 6px; }
+  .mine-diff-btn { font-size: 11px; padding: 8px 6px; }
+
+  /* ══ MEMORY CARD mobile ══ */
+  .memory-layout { flex-direction: column; gap: 12px; }
+  .memory-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+    width: 100%;
+  }
+  .memory-side .snake-info-card {
+    flex: 1;
+    min-width: calc(50% - 4px);
+    padding: 10px 12px;
+  }
+  .memory-side .memory-how  { width: 100%; }
+  .memory-side > .btn        { width: 100%; }
+  .memory-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+    max-width: 100%;
+  }
+  .mem-card-front::after { font-size: 11px; }
+  .mem-card-back { font-size: 16px; }
+
+  /* ══ TETRIS mobile ══ */
+  .snake-wrap { flex-direction: column; align-items: center; gap: 12px; }
+  #tetCanvas { width: 200px !important; height: 400px !important; }
+  .touch-actions { display: flex; width: 100%; }
+  .touch-actions button { flex: 1; font-size: 20px; padding: 12px 8px; }
+
+  /* ── Notes ── */
+  .note-card { padding: 14px; }
+
+  /* ── Toast ── */
+  .toast-wrap { bottom: 70px; right: 12px; left: 12px; }
+  .toast { max-width: 100%; }
+
+  /* ── Crypto/Overlay modal ── */
+  #cryptoModalBox { padding: 22px 16px !important; }
+}
+
+/* ═══════════════════════════════════════
+   BREAKPOINT: nhỏ hơn nữa — ≤ 380px
+════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-val { font-size: 16px; }
+  #snakeCanvas { width: 280px !important; height: 280px !important; }
+  .memory-grid { grid-template-columns: repeat(4, 1fr); }
+  .mine-cell { width: 24px; height: 24px; font-size: 10px; }
+  .main { padding: 12px 10px 74px; }
+}
