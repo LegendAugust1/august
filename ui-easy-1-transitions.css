@@ -1,0 +1,79 @@
+/* ═══════════════════════════════════════════════════════════
+   UI NÂNG CẤP DỄ #1 — HIỆU ỨNG CHUYỂN VIEW MƯỢT
+   Thêm vào cuối style.css hoặc link riêng sau mobile.css
+═══════════════════════════════════════════════════════════ */
+
+/* ── View transition ── */
+.view {
+  animation: none !important; /* tắt animation cũ nếu có */
+}
+
+/* Trạng thái đang ẩn (chuẩn bị vào) */
+.view-enter {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+/* Trạng thái đang hiện ra */
+.view-enter-active {
+  animation: viewFadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Trạng thái đang ra đi */
+.view-exit-active {
+  animation: viewFadeOut 0.18s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes viewFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes viewFadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+/* ── Stagger cho các card con khi view xuất hiện ── */
+.view-enter-active .acc-card,
+.view-enter-active .stat-card,
+.view-enter-active .note-card,
+.view-enter-active .game-card {
+  animation: cardStagger 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.view-enter-active .acc-card:nth-child(1),
+.view-enter-active .stat-card:nth-child(1),
+.view-enter-active .note-card:nth-child(1),
+.view-enter-active .game-card:nth-child(1)  { animation-delay: 0.04s; }
+.view-enter-active .acc-card:nth-child(2),
+.view-enter-active .stat-card:nth-child(2),
+.view-enter-active .note-card:nth-child(2),
+.view-enter-active .game-card:nth-child(2)  { animation-delay: 0.07s; }
+.view-enter-active .acc-card:nth-child(3),
+.view-enter-active .stat-card:nth-child(3),
+.view-enter-active .note-card:nth-child(3),
+.view-enter-active .game-card:nth-child(3)  { animation-delay: 0.10s; }
+.view-enter-active .acc-card:nth-child(4),
+.view-enter-active .stat-card:nth-child(4),
+.view-enter-active .note-card:nth-child(4),
+.view-enter-active .game-card:nth-child(4)  { animation-delay: 0.13s; }
+.view-enter-active .acc-card:nth-child(n+5),
+.view-enter-active .stat-card:nth-child(n+5),
+.view-enter-active .note-card:nth-child(n+5),
+.view-enter-active .game-card:nth-child(n+5) { animation-delay: 0.16s; }
+
+@keyframes cardStagger {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* ── Nav item ripple khi click ── */
+.nav-item {
+  transition: color .2s, background .2s, transform .1s !important;
+}
+.nav-item:active {
+  transform: translateX(3px);
+}

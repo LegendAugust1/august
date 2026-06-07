@@ -1,0 +1,202 @@
+/* ═══════════════════════════════════════════════════════════
+   UI NÂNG CẤP TRUNG BÌNH
+   1. STATS CARDS ĐẸP HƠN (sparkline + donut)
+   2. NHÓM TÀI KHOẢN THEO TAG
+   Link sau ui-easy-3-shimmer.css
+═══════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════
+   STATS CARDS — thêm mini chart
+══════════════════════════════════════ */
+
+.stat-card {
+  padding: 16px 18px 14px;
+  cursor: default;
+  transition: transform .22s, box-shadow .22s, border-color .22s !important;
+}
+.stat-card:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(168,85,247,.35) !important;
+  box-shadow: 0 8px 32px rgba(124,58,237,.18) !important;
+}
+
+/* Header row: icon + label */
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.stat-lbl {
+  margin-bottom: 0 !important;
+}
+
+/* Value + trend */
+.stat-body {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+.stat-left { flex: 1; min-width: 0; }
+.stat-val  { margin-bottom: 2px; }
+
+/* Trend badge */
+.stat-trend {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.stat-trend.up   { background: rgba(34,211,160,.15); color: var(--green); }
+.stat-trend.down { background: rgba(239,68,68,.13);  color: var(--red); }
+.stat-trend.neu  { background: rgba(107,114,128,.13); color: var(--muted); }
+
+/* Sparkline canvas */
+.stat-spark {
+  display: block;
+  margin-top: 10px;
+  border-radius: 4px;
+  opacity: .85;
+}
+
+/* Donut canvas wrapper */
+.stat-donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+.stat-donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.sdl-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sdl-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+
+/* ══════════════════════════════════════
+   NHÓM TÀI KHOẢN THEO TAG
+══════════════════════════════════════ */
+
+/* Toggle view buttons */
+.view-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 3px;
+}
+.vt-btn {
+  padding: 5px 11px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: 'Sora', sans-serif;
+  transition: all .18s;
+  white-space: nowrap;
+}
+.vt-btn.active {
+  background: rgba(124,58,237,.25);
+  color: var(--accent3);
+}
+.vt-btn:hover:not(.active) { color: var(--text); }
+
+/* Tag filter chips */
+.tag-filter-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+  min-height: 0;
+  overflow: hidden;
+  transition: max-height .3s ease, margin .3s ease;
+}
+.tag-filter-bar.hidden {
+  max-height: 0 !important;
+  margin-bottom: 0;
+}
+.tag-chip {
+  padding: 4px 11px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--panel);
+  font-family: 'Sora', sans-serif;
+  transition: all .18s;
+  white-space: nowrap;
+}
+.tag-chip:hover { border-color: var(--accent); color: var(--text); }
+.tag-chip.active {
+  background: rgba(124,58,237,.22);
+  border-color: var(--accent2);
+  color: var(--accent3);
+}
+.tag-chip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 99px;
+  background: rgba(168,85,247,.25);
+  color: var(--accent3);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 0 4px;
+  margin-left: 3px;
+}
+
+/* Group header in grouped view */
+.tag-group {
+  margin-bottom: 24px;
+}
+.tag-group-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.tag-group-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent3);
+  letter-spacing: .06em;
+}
+.tag-group-count {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+.tag-group-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(168,85,247,.2), transparent);
+}

@@ -1,0 +1,56 @@
+/* ═══════════════════════════════════════════════════════════
+   UI NÂNG CẤP DỄ #2 — HIGHLIGHT TỪ KHÓA TÌM KIẾM
+   Thêm vào cuối style.css
+═══════════════════════════════════════════════════════════ */
+
+/* Highlight span được inject bởi JS */
+.hl {
+  background: rgba(168, 85, 247, 0.28);
+  color: #e9d5ff;
+  border-radius: 3px;
+  padding: 0 2px;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.35);
+}
+
+/* Search box — thêm icon clear khi có text */
+.search-clear {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px;
+  border-radius: 4px;
+  transition: color .15s;
+  display: none;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+.search-clear:hover { color: var(--text); }
+.search-clear.show  { display: block; }
+
+/* Search box — đếm kết quả */
+.search-count {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-left: 2px;
+  transition: opacity .2s;
+}
+
+/* Khi search không có kết quả — pulse nhẹ border đỏ */
+.search-box.no-result {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.08) !important;
+  animation: searchShake .35s ease;
+}
+
+@keyframes searchShake {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+
+/* Search input — gõ thì placeholder mờ dần */
+.search-box:focus-within .search-icon { color: var(--accent3); }

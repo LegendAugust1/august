@@ -1,0 +1,114 @@
+/* ═══════════════════════════════════════════════════════════
+   UI NÂNG CẤP DỄ #3 — SHIMMER & GRADIENT BORDER CARD
+   Thêm vào cuối style.css
+═══════════════════════════════════════════════════════════ */
+
+/* ── Gradient accent border-top ── */
+.acc-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.acc-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--accent) 25%,
+    var(--accent2) 50%,
+    var(--accent3) 75%,
+    transparent
+  );
+  opacity: 0;
+  transform: scaleX(0.4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  border-radius: 2px 2px 0 0;
+}
+
+.acc-card:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ── Shimmer sweep khi hover ── */
+.acc-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(192, 132, 252, 0.06) 50%,
+    rgba(168, 85, 247, 0.04) 55%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: none;
+}
+
+.acc-card:hover::before {
+  animation: shimmerSweep 0.6s ease forwards;
+}
+
+@keyframes shimmerSweep {
+  0%   { left: -100%; }
+  100% { left: 160%; }
+}
+
+/* ── Card focus glow khi click ── */
+.acc-card:active {
+  transform: scale(0.985) !important;
+  box-shadow:
+    0 0 0 1px rgba(168, 85, 247, 0.35),
+    0 0 24px rgba(124, 58, 237, 0.18) !important;
+}
+
+/* ── Note card cũng có hiệu ứng tương tự ── */
+.note-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.note-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255,255,255, 0.04) 50%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.note-card:hover::before {
+  animation: shimmerSweep 0.55s ease forwards;
+}
+
+/* ── Stat card: neon glow khi hover ── */
+.stat-card {
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+.stat-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(168, 85, 247, 0.35) !important;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.18) !important;
+}
+
+/* ── Game card hover ── */
+.game-card {
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+.game-card:hover {
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  box-shadow: 0 6px 28px rgba(124, 58, 237, 0.2) !important;
+}
